@@ -17,3 +17,5 @@ spring:
 
   application:
     name: bumaview
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
