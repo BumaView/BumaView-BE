@@ -53,39 +53,16 @@ public class JwtProvider {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
     }
-    public String generateAccessToken(String userId, String userType) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY);
-
-        return Jwts.builder()
-                .setSubject(userId)
-                .claim("userType", userType)           // 단일 권한 추가
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-                .compact();
-    }
 
     public String createAccessToken(String userId, String userType) {
-        if("admin".equals(userType)) {
-            return Jwts.builder()
-                    .setSubject("AccessToken")
-                    .claim("userId", userId)
-                    .claim("userType", userType)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
-                    .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-                    .compact();
-        } else {
-            return Jwts.builder()
-                    .setSubject("AccessToken")
-                    .claim("userId", userId)
-                    .claim("userType", userType)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
-                    .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-                    .compact();
-        }
+        return Jwts.builder()
+                .setSubject("AccessToken")
+                .claim("userId", userId)
+                .claim("userType", userType)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .compact();
     }
     public String createRefreshToken(String userId, String userType) {
 
