@@ -93,7 +93,7 @@ public class AuthController {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        String accessToken = jwtProvider.generateAccessToken(userId, user.getRole().name());
+        String accessToken = jwtProvider.createAccessToken(userId, user.getRole().name());
         String refreshToken = jwtProvider.createRefreshToken(userId, user.getRole().name());
 
         return Map.of(
