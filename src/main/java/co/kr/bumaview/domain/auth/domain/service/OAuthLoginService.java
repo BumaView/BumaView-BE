@@ -56,7 +56,7 @@ public class OAuthLoginService {
 
             // 4. JWT 토큰 생성
             String accessToken = jwtProvider.createAccessToken(userInfo.getUserId(), userInfo.getUserType().name());
-            String refreshToken = jwtProvider.createRefreshToken(userInfo.getUserId(), userInfo.getUserType());
+            String refreshToken = jwtProvider.createRefreshToken(userInfo.getUserId(), userInfo.getUserType().name());
 
             log.info("[OAuth] Generated JWT tokens for user: {}", userInfo.getUserId());
 
