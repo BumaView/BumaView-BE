@@ -54,6 +54,18 @@ public class JwtProvider {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
     }
+    public String generateAccessToken(String userId, String userType) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + ACCESS_TOKEN_VALIDITY);
+
+        return Jwts.builder()
+                .setSubject(userId)
+                .claim("role", userType)           // 단일 권한 추가
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     public String createAccessToken(Long userId, String userType) {
         if("admin".equals(userType)) {
