@@ -46,12 +46,13 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(LogoutRequestDto request) {
-        String token = request.getRefreshToken();
-        validateToken(token);
+    public void logout(LogoutRequestDto logoutRequestDto) {
+        String refreshToken = logoutRequestDto.getRefreshToken();
 
-        tokenRepository.deleteByRefreshToken(token)
-                .orElseThrow(() -> new RuntimeException("유효한 리프레시 토큰이 없습니다."));
+        boolean deleted = tokenRepository.deleteByRefreshToken(refreshToken) > 0;
+        if (!deleted) {
+            throw new IllegalArgumentException("유효한 리프레시 토큰이 없습니다.");
+        }
     }
 
     private void validateToken(String token) {
