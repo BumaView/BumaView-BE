@@ -1,15 +1,15 @@
 package co.kr.bumaview.global.security.jwt;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 
@@ -34,20 +34,16 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
 
             try {
-                Claims claims = jwtProvider.parseToken(token);
+                if (jwtProvider.validateToken(token)) {
+                    Authentication authentication = jwtProvider.getAuthentication(token);
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                claims.get("userId"),
-                                null,
-                                null
-                        );
-
-                authentication.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
+                    // AbstractAuthenticationToken으로 캐스팅
+                    if (authentication instanceof AbstractAuthenticationToken) {
+                        ((AbstractAuthenticationToken) authentication).setDetails(
+                                new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
             }
