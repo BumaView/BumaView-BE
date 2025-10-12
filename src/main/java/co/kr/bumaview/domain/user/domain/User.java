@@ -24,6 +24,5 @@ public class User {
 
     private Authority role;
 
-    @Column(columnDefinition = "json")
     private String password;
 }
