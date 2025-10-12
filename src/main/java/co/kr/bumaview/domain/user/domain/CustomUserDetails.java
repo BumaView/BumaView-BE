@@ -15,10 +15,10 @@ import java.util.stream.Stream;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-    private final Long userId;
+    private final String userId;
     private final String userType;
 
-    public CustomUserDetails(Long userId, String userType) {
+    public CustomUserDetails(String userId, String userType) {
         this.userId = userId;
         this.userType = userType;
     }

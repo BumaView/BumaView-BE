@@ -9,7 +9,7 @@ import lombok.Getter;
 public class LoginResponseDto {
 
     private String userType;
-    private Long userId;
+    private String userId;
     private String name;
     private String accessToken;
     private String refreshToken;

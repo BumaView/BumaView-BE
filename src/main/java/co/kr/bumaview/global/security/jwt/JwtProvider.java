@@ -55,7 +55,7 @@ public class JwtProvider {
         }
     }
 
-    public String createAccessToken(Long userId, String userType) {
+    public String createAccessToken(String userId, String userType) {
         if("admin".equals(userType)) {
             return Jwts.builder()
                     .setSubject("AccessToken")
@@ -76,7 +76,7 @@ public class JwtProvider {
                     .compact();
         }
     }
-    public String createRefreshToken(Long userId, Authority userType) {
+    public String createRefreshToken(String userId, Authority userType) {
 
         String refreshToken = Jwts.builder()
                 .setSubject("RefreshToken")
@@ -115,7 +115,7 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        Long userId = claims.get("userId", Long.class);
+        String userId = claims.get("userId", String.class);
         String userType = claims.get("userType").toString();
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -150,7 +150,7 @@ public class JwtProvider {
                 .parseClaimsJws(refreshToken.getRefreshToken())
                 .getBody();
 
-        Long userId = claims.get("userId", Long.class);
+        String userId = claims.get("userId", String.class);
         String userType = claims.get("userType", String.class);
 
         return createAccessToken(userId, userType);

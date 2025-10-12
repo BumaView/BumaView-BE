@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="refresh_token")
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class RefreshToken {
     @Id
-    private Long id;
+    private String userId;
     @Column(name = "refresh_token", nullable = false, unique = true)
     private String refreshToken;
     @Enumerated(EnumType.STRING)
@@ -22,5 +21,11 @@ public class RefreshToken {
 
     public void updateToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public RefreshToken(String userId, String refreshToken, Authority userType) {
+        this.userId = userId;
+        this.refreshToken = refreshToken;
+        this.userType = userType;
     }
 }

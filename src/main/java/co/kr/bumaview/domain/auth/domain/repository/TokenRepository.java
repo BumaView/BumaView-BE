@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface TokenRepository extends JpaRepository<RefreshToken, Long> {
+public interface TokenRepository extends JpaRepository<RefreshToken, String> {
 
     Optional<RefreshToken> deleteByRefreshToken(String token);
 }

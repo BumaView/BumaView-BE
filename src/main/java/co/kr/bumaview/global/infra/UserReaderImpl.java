@@ -24,7 +24,7 @@ public class UserReaderImpl implements UserReader {
                     jdbcTemplate.queryForObject(
                             query,
                             (rs, rowNum) -> UserInfo.builder()
-                                    .userId(rs.getLong("id"))
+                                    .userId(rs.getString("id"))
                                     .name(rs.getString("name"))
                                     .userType(Authority.valueOf(rs.getString("user_type").toUpperCase()))
                                     .build(),
@@ -37,13 +37,13 @@ public class UserReaderImpl implements UserReader {
     }
 
     @Override
-    public UserInfo read(Class<?> clazz, Long id) {
+    public UserInfo read(Class<?> clazz, String id) {
         try {
             String query = "SELECT id, name, email, user_type FROM users WHERE id = ?";
             return jdbcTemplate.queryForObject(
                     query,
                     (rs, rowNum) -> UserInfo.builder()
-                            .userId(rs.getLong("id"))
+                            .userId(rs.getString("id"))
                             .name(rs.getString("name"))
                             .userType(Authority.valueOf(rs.getString("user_type").toUpperCase()))
                             .build(),
