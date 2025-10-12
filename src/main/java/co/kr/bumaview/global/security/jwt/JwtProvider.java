@@ -4,7 +4,6 @@ import co.kr.bumaview.domain.auth.domain.RefreshToken;
 import co.kr.bumaview.domain.auth.domain.repository.TokenRepository;
 import co.kr.bumaview.domain.auth.presentation.dto.req.TokenRefreshRequestDto;
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
-import co.kr.bumaview.domain.user.domain.type.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -60,14 +59,14 @@ public class JwtProvider {
 
         return Jwts.builder()
                 .setSubject(userId)
-                .claim("role", userType)           // 단일 권한 추가
+                .claim("userType", userType)           // 단일 권한 추가
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String createAccessToken(Long userId, String userType) {
+    public String createAccessToken(String userId, String userType) {
         if("admin".equals(userType)) {
             return Jwts.builder()
                     .setSubject("AccessToken")
@@ -88,7 +87,7 @@ public class JwtProvider {
                     .compact();
         }
     }
-    public String createRefreshToken(Long userId, Authority userType) {
+    public String createRefreshToken(String userId, String userType) {
 
         String refreshToken = Jwts.builder()
                 .setSubject("RefreshToken")
@@ -99,7 +98,7 @@ public class JwtProvider {
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
 
-        tokenRepository.findById(userId)
+        tokenRepository.findByUserId(userId)
                 .ifPresentOrElse(
                         token -> token.updateToken(refreshToken), // update
                         () -> tokenRepository.save(new RefreshToken(userId, refreshToken, userType)) // insert
@@ -127,7 +126,7 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        Long userId = claims.get("userId", Long.class);
+        String userId = claims.get("userId", String.class);
         String userType = claims.get("userType").toString();
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -162,7 +161,7 @@ public class JwtProvider {
                 .parseClaimsJws(refreshToken.getRefreshToken())
                 .getBody();
 
-        Long userId = claims.get("userId", Long.class);
+        String userId = claims.get("userId", String.class);
         String userType = claims.get("userType", String.class);
 
         return createAccessToken(userId, userType);
