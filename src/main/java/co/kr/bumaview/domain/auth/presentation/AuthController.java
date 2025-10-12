@@ -10,11 +10,17 @@ import co.kr.bumaview.domain.auth.presentation.dto.res.LogoutResponseDto;
 import co.kr.bumaview.domain.auth.presentation.dto.res.RefreshResponse;
 import co.kr.bumaview.domain.auth.presentation.dto.res.SignUpResponse;
 import co.kr.bumaview.domain.auth.service.AuthService;
+import co.kr.bumaview.domain.user.domain.User;
+import co.kr.bumaview.domain.user.domain.repository.UserRepository;
+import co.kr.bumaview.global.security.jwt.JwtProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/auth")
@@ -23,11 +29,18 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     private final OAuthLoginService oAuthLoginService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
+
 
     @PostMapping("/sign-up")
     public ResponseEntity<SignUpResponse> signUp(
             @RequestBody SignUpRequest signUpRequest
     ){
+        if (userRepository.existsByUserId(signUpRequest.getId())) {
+            return ResponseEntity.badRequest().body(new SignUpResponse(403L, "이미 존재하는 사용자입니다."));
+        }
         SignUpResponse signUpResponse = authService.signUp(signUpRequest);
         return ResponseEntity.ok(signUpResponse);
     }
@@ -64,5 +77,22 @@ public class AuthController {
     ) {
         authService.logout(logoutRequestDto);
         return ResponseEntity.ok(new LogoutResponseDto("로그아웃 되었습니다."));
+    }
+
+    //자체 로그인~~~
+    @PostMapping("/login")
+    public Map<String, String> login(@RequestBody Map<String, String> request) {
+        String userId = request.get("userId");
+        String password = request.get("password");
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String accessToken = jwtProvider.generateAccessToken(userId, user.getRole().name());
+        return Map.of("accessToken", accessToken);
     }
 }
