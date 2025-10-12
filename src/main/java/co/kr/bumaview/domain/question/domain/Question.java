@@ -1,6 +1,5 @@
 package co.kr.bumaview.domain.question.domain;
 
-import co.kr.bumaview.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,15 +30,15 @@ public class Question {
 
     private String field;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
-    private User user;
+    private String authorId;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Builder
-    public Question(String question) {
+    public Question(String question, String authorId) {
         this.question = question;
+        this.authorId = authorId;
     }
 }
