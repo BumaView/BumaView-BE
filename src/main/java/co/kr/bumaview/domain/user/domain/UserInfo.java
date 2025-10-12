@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserInfo {
-    private Long userId;
+    private String userId;
     private String name;
     private Authority userType;
 }

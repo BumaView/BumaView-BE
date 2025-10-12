@@ -4,7 +4,6 @@ import co.kr.bumaview.domain.auth.domain.RefreshToken;
 import co.kr.bumaview.domain.auth.domain.repository.TokenRepository;
 import co.kr.bumaview.domain.auth.presentation.dto.req.TokenRefreshRequestDto;
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
-import co.kr.bumaview.domain.user.domain.type.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -55,28 +54,17 @@ public class JwtProvider {
         }
     }
 
-    public String createAccessToken(Long userId, String userType) {
-        if("admin".equals(userType)) {
-            return Jwts.builder()
-                    .setSubject("AccessToken")
-                    .claim("userId", userId)
-                    .claim("userType", userType)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
-                    .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-                    .compact();
-        } else {
-            return Jwts.builder()
-                    .setSubject("AccessToken")
-                    .claim("userId", userId)
-                    .claim("userType", userType)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
-                    .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-                    .compact();
-        }
+    public String createAccessToken(String userId, String userType) {
+        return Jwts.builder()
+                .setSubject("AccessToken")
+                .claim("userId", userId)
+                .claim("userType", userType)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .compact();
     }
-    public String createRefreshToken(Long userId, Authority userType) {
+    public String createRefreshToken(String userId, String userType) {
 
         String refreshToken = Jwts.builder()
                 .setSubject("RefreshToken")
@@ -115,7 +103,7 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        Long userId = claims.get("userId", Long.class);
+        String userId = claims.get("userId", String.class);
         String userType = claims.get("userType").toString();
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -150,7 +138,7 @@ public class JwtProvider {
                 .parseClaimsJws(refreshToken.getRefreshToken())
                 .getBody();
 
-        Long userId = claims.get("userId", Long.class);
+        String userId = claims.get("userId", String.class);
         String userType = claims.get("userType", String.class);
 
         return createAccessToken(userId, userType);
