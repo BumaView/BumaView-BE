@@ -75,6 +75,7 @@ public class AuthController {
     public ResponseEntity<LogoutResponseDto> logout(
             @Valid @RequestBody LogoutRequestDto logoutRequestDto
     ) {
+        log.info(">>> [AuthController] logout 호출됨.");
         authService.logout(logoutRequestDto);
         return ResponseEntity.ok(new LogoutResponseDto("로그아웃 되었습니다."));
     }
@@ -93,6 +94,11 @@ public class AuthController {
         }
 
         String accessToken = jwtProvider.generateAccessToken(userId, user.getRole().name());
-        return Map.of("accessToken", accessToken);
+        String refreshToken = jwtProvider.createRefreshToken(userId, user.getRole().name());
+
+        return Map.of(
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+        );
     }
 }
