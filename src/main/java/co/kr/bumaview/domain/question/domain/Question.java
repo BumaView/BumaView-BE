@@ -2,13 +2,16 @@ package co.kr.bumaview.domain.question.domain;
 
 import co.kr.bumaview.domain.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="questions")
 @Getter
+@NoArgsConstructor
 public class Question {
 
     @Id
@@ -34,4 +37,9 @@ public class Question {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @Builder
+    public Question(String question) {
+        this.question = question;
+    }
 }
