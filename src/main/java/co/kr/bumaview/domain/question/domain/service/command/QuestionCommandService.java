@@ -11,8 +11,8 @@ public class QuestionCommandService {
 
     private final QuestionRepository questionRepository;
 
-    public Question createQuestion(String q) {
-        Question question = new Question(q);
+    public Question createQuestion(String q, String authorId) {
+        Question question = new Question(q, authorId);
         return questionRepository.save(question);
     }
 }
