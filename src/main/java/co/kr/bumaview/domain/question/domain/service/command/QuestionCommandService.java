@@ -22,7 +22,7 @@ public class QuestionCommandService {
         return questionRepository.save(question);
     }
 
-    public void createQuestionsFromGoogleSheet(String googleSheetUrl, String authorId) {
+    public Long createQuestionsFromGoogleSheet(String googleSheetUrl, String authorId) {
         try {
             // 1) URL에서 스프레드시트 ID 추출
             String spreadsheetId = extractSpreadsheetId(googleSheetUrl);
@@ -38,7 +38,7 @@ public class QuestionCommandService {
             String range = String.format("%s!A1:ZZ", firstSheetName);
             List<List<Object>> rows = googleSheetApiClient.readSheet(spreadsheetId, range);
             if (rows.isEmpty()) {
-                return;
+                return 0L;
             }
 
             // 4) 첫 행은 헤더
@@ -94,6 +94,7 @@ public class QuestionCommandService {
         } catch (Exception e) {
             throw new RuntimeException("Google Sheet에서 질문을 불러오는 중 오류 발생: " + e.getMessage(), e);
         }
+        return questionRepository.count();
     }
 
     private String extractSpreadsheetId(String url) {
