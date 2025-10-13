@@ -28,3 +28,7 @@ oauth:
     redirect-uri: ${GOOGLE_REDIRECT_URI}
     token-url: https://oauth2.googleapis.com/token
     user-info-url: https://www.googleapis.com/oauth2/v3/userinfo
+
+google:
+  sheets:
+    credentials-path: ${GOOGLE_SHEETS_KEY_FILE_PATH}
