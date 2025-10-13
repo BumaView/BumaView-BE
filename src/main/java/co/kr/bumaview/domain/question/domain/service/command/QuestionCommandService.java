@@ -5,6 +5,7 @@ import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
 import co.kr.bumaview.global.infra.GoogleSheetApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -17,11 +18,13 @@ public class QuestionCommandService {
     private final QuestionRepository questionRepository;
     private final GoogleSheetApiClient googleSheetApiClient;
 
+    @Transactional
     public Question createQuestion(String q, String authorId) {
         Question question = new Question(q, authorId);
         return questionRepository.save(question);
     }
 
+    @Transactional
     public Long createQuestionsFromGoogleSheet(String googleSheetUrl, String authorId) {
         try {
             // 1) URL에서 스프레드시트 ID 추출
