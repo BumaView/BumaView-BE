@@ -7,6 +7,7 @@ import co.kr.bumaview.domain.question.presentation.dto.res.QuestionSheetResponse
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/questions")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class QuestionAdminController {
 
     private final QuestionCommandService questionCommandService;
