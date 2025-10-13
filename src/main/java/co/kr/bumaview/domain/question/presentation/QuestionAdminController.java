@@ -2,18 +2,17 @@ package co.kr.bumaview.domain.question.presentation;
 
 import co.kr.bumaview.domain.question.domain.service.command.QuestionCommandService;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionRequest;
+import co.kr.bumaview.domain.question.presentation.dto.req.UpdateQuestionRequest;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionResponse;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionSheetResponse;
+import co.kr.bumaview.domain.question.presentation.dto.res.UpdateQuestionResponse;
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -48,5 +47,19 @@ public class QuestionAdminController {
     ){
         Long total = questionCommandService.createQuestionsFromGoogleSheet(googleSheetUrl, userDetails.getUserId());
         return ResponseEntity.ok().body(new QuestionSheetResponse("등록되었습니다", Map.of("total", total)));
+    }
+
+    @PatchMapping("{question_id}")
+    public ResponseEntity<UpdateQuestionResponse> updateQuestion(
+            @PathVariable("question_id") Long questionId,
+            @RequestBody UpdateQuestionRequest requestDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        questionCommandService.updateQuestion(questionId, requestDto.getQ(), userDetails.getUserId());
+        UpdateQuestionResponse response = new UpdateQuestionResponse(
+                questionId,
+                "질문이 수정되었습니다."
+        );
+        return ResponseEntity.ok(response);
     }
 }

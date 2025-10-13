@@ -56,4 +56,8 @@ public class Question {
         q.updatedAt = LocalDateTime.now();
         return q;
     }
+
+    public void updateContent(String question) {
+        this.question = question;
+    }
 }
