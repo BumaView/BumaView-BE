@@ -35,4 +35,13 @@ public class QuestionAdminController {
 
         return ResponseEntity.ok(new QuestionResponse("등록되었습니다", registered));
     }
+
+    @PostMapping("/sheets")
+    public ResponseEntity<QuestionResponse> handleQuestionsFromSheet(
+            @RequestBody String googleSheetUrl,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        questionCommandService.createQuestionsFromGoogleSheet(googleSheetUrl, userDetails.getUserId());
+        return ResponseEntity.ok(new QuestionResponse("등록되었습니다", List.of()));
+    }
 }
