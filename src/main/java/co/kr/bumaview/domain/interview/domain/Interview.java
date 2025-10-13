@@ -24,6 +24,9 @@ public class Interview {
     @JoinColumn(name = "interview_id")
     private List<Question> questions = new ArrayList<>();
 
+    @Column(columnDefinition = "TEXT", name="answer_text")
+    private String answer;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public Interview(String title, List<Question> questions) {
