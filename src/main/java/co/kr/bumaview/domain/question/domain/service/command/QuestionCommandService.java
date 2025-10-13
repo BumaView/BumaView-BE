@@ -124,4 +124,17 @@ public class QuestionCommandService {
 
         question.updateContent(q);
     }
+
+    @Transactional
+    public void deleteQuestion(Long questionId, String userId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 질문입니다."));
+
+        // 작성자 확인
+        if (!question.getAuthorId().equals(userId)) {
+            throw new AccessDeniedException("본인 질문만 삭제할 수 있습니다.");
+        }
+
+        questionRepository.delete(question);
+    }
 }

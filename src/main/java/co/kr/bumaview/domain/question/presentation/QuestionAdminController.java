@@ -3,6 +3,7 @@ package co.kr.bumaview.domain.question.presentation;
 import co.kr.bumaview.domain.question.domain.service.command.QuestionCommandService;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionRequest;
 import co.kr.bumaview.domain.question.presentation.dto.req.UpdateQuestionRequest;
+import co.kr.bumaview.domain.question.presentation.dto.res.DeleteQuestionResponse;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionResponse;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionSheetResponse;
 import co.kr.bumaview.domain.question.presentation.dto.res.UpdateQuestionResponse;
@@ -49,7 +50,7 @@ public class QuestionAdminController {
         return ResponseEntity.ok().body(new QuestionSheetResponse("등록되었습니다", Map.of("total", total)));
     }
 
-    @PatchMapping("{question_id}")
+    @PatchMapping("/{question_id}")
     public ResponseEntity<UpdateQuestionResponse> updateQuestion(
             @PathVariable("question_id") Long questionId,
             @RequestBody UpdateQuestionRequest requestDto,
@@ -62,4 +63,20 @@ public class QuestionAdminController {
         );
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{question_id}")
+    public ResponseEntity<DeleteQuestionResponse> deleteQuestion(
+            @PathVariable("question_id") Long questionId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        questionCommandService.deleteQuestion(questionId, userDetails.getUserId());
+
+        DeleteQuestionResponse response = new DeleteQuestionResponse(
+                questionId,
+                "질문이 삭제되었습니다."
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
 }
