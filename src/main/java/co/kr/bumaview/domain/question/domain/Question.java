@@ -31,7 +31,7 @@ public class Question {
 
     private String field;
 
-    @JoinColumn(name = "author_id")
+    @Column(name = "author_id")
     private String authorId;
 
     private LocalDateTime createdAt;
