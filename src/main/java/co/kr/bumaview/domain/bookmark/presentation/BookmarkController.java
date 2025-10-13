@@ -2,6 +2,7 @@ package co.kr.bumaview.domain.bookmark.presentation;
 
 import co.kr.bumaview.domain.bookmark.presentation.dto.req.CreateBookmarkRequest;
 import co.kr.bumaview.domain.bookmark.presentation.dto.req.CreateFolderRequest;
+import co.kr.bumaview.domain.bookmark.presentation.dto.res.BookmarkFolderResponse;
 import co.kr.bumaview.domain.bookmark.presentation.dto.res.BookmarkResponse;
 import co.kr.bumaview.domain.bookmark.presentation.dto.res.FolderResponse;
 import co.kr.bumaview.domain.bookmark.service.BookmarkService;
@@ -10,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookmarks")
@@ -39,5 +39,19 @@ public class BookmarkController {
     ) {
         BookmarkResponse response = bookmarkService.createBookmark(request, userDetails.getUserId());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{folder_id}")
+    public ResponseEntity<BookmarkFolderResponse> getFolder(
+            @PathVariable("folder_id") Long folderId
+    ) {
+        BookmarkFolderResponse response = bookmarkService.getFolderWithBookmarks(folderId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BookmarkFolderResponse>> getAllFolders() {
+        return ResponseEntity.ok(bookmarkService.getAllFolders());
     }
 }
