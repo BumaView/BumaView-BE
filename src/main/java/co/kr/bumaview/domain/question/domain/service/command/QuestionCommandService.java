@@ -4,6 +4,7 @@ import co.kr.bumaview.domain.question.domain.Question;
 import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
 import co.kr.bumaview.global.infra.GoogleSheetApiClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,5 +110,18 @@ public class QuestionCommandService {
             return matcher.group(1);
         }
         throw new IllegalArgumentException("유효하지 않은 Google Sheet URL입니다: " + url);
+    }
+
+    @Transactional
+    public void updateQuestion(Long questionId, String q, String userId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 질문입니다."));
+
+        // 작성자 확인
+        if (!question.getAuthorId().equals(userId)) {
+            throw new AccessDeniedException("본인 질문만 수정할 수 있습니다.");
+        }
+
+        question.updateContent(q);
     }
 }
