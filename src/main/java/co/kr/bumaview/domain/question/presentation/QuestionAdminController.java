@@ -5,6 +5,7 @@ import co.kr.bumaview.domain.question.presentation.dto.req.QuestionRequest;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionResponse;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionSheetResponse;
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ public class QuestionAdminController {
 
     @PostMapping
     public ResponseEntity<QuestionResponse> handleQuestions(
-            @RequestBody QuestionRequest requestDto,
+            @Valid @RequestBody QuestionRequest requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         List<QuestionResponse.RegisteredQuestion> registered = requestDto.getQuestions().stream()
