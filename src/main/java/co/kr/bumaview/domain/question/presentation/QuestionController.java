@@ -3,6 +3,7 @@ package co.kr.bumaview.domain.question.presentation;
 import co.kr.bumaview.domain.question.domain.Question;
 import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
 import co.kr.bumaview.domain.question.domain.service.query.QuestionQueryService;
+import co.kr.bumaview.domain.question.presentation.dto.req.QuestionFilterRequest;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionPageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -58,4 +59,22 @@ public class QuestionController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/search")
+    public ResponseEntity<?> filterQuestions(
+            @RequestBody QuestionFilterRequest request,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        Page<Question> questions = questionQueryService.filterQuestions(request, pageable);
+
+        Page<QuestionPageResponse> response = questions.map(q -> new QuestionPageResponse(
+                q.getId(),
+                q.getQuestion(),
+                q.getCompany(),
+                q.getYear(),
+                q.getCategory(),
+                q.getTag()
+        ));
+
+        return ResponseEntity.ok(response);
+    }
 }
