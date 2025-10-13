@@ -41,7 +41,7 @@ public class InterviewService {
 
         return new CreateInterviewRes(
                 interview.getId(),
-                interview.getTitle(),
+                interview.getInterviewName(),
                 questionDtos,
                 interview.getCreatedAt()
         );

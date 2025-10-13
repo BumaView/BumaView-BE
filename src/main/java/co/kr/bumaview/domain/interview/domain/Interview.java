@@ -18,16 +18,22 @@ public class Interview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    private String userId;
+
+    @Column(name = "interview_name")
+    private String interviewName;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "interview_id")
+    @JoinColumn(name = "question_id")
     private List<Question> questions = new ArrayList<>();
+
+    @Column(columnDefinition = "TEXT", name="answer_text")
+    private String answer;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public Interview(String title, List<Question> questions) {
-        this.title = title;
+    public Interview(String interviewName, List<Question> questions) {
+        this.interviewName = interviewName;
         this.questions = questions;
     }
 }
