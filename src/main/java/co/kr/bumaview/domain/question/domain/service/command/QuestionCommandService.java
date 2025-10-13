@@ -137,4 +137,25 @@ public class QuestionCommandService {
 
         questionRepository.delete(question);
     }
+
+    @Transactional
+    public void deleteAllQuestion(List<Long> questionIds, String userId) {
+        List<Question> questionsToDelete = new ArrayList<>();
+
+        for (Long id : questionIds) {
+            // 존재 여부 확인
+            Question question = questionRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 질문입니다. id=" + id));
+
+            // 작성자 확인
+            if (!question.getAuthorId().equals(userId)) {
+                throw new AccessDeniedException("본인 질문만 삭제할 수 있습니다. id=" + id);
+            }
+
+            questionsToDelete.add(question);
+        }
+
+        // 한 번에 삭제
+        questionRepository.deleteAll(questionsToDelete);
+    }
 }

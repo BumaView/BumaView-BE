@@ -1,12 +1,10 @@
 package co.kr.bumaview.domain.question.presentation;
 
 import co.kr.bumaview.domain.question.domain.service.command.QuestionCommandService;
+import co.kr.bumaview.domain.question.presentation.dto.req.DeleteAllQuestionsRequest;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionRequest;
 import co.kr.bumaview.domain.question.presentation.dto.req.UpdateQuestionRequest;
-import co.kr.bumaview.domain.question.presentation.dto.res.DeleteQuestionResponse;
-import co.kr.bumaview.domain.question.presentation.dto.res.QuestionResponse;
-import co.kr.bumaview.domain.question.presentation.dto.res.QuestionSheetResponse;
-import co.kr.bumaview.domain.question.presentation.dto.res.UpdateQuestionResponse;
+import co.kr.bumaview.domain.question.presentation.dto.res.*;
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -78,5 +76,21 @@ public class QuestionAdminController {
 
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping
+    public ResponseEntity<DeleteAllQuestionsRes> deleteAllQuestions(
+            @RequestBody DeleteAllQuestionsRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        questionCommandService.deleteAllQuestion(request.questionIds(), userDetails.getUserId());
+
+        DeleteAllQuestionsRes res = new DeleteAllQuestionsRes(
+                request.questionIds(),
+                "선택한 질문이 삭제되었습니다."
+        );
+
+        return ResponseEntity.ok(res);
+    }
+
 
 }
