@@ -17,10 +17,11 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String question;
 
     @Column(columnDefinition = "json")
-    private String tad; //-> json
+    private String tag; //-> json
 
     private String company;
 
@@ -40,5 +41,19 @@ public class Question {
     public Question(String question, String authorId) {
         this.question = question;
         this.authorId = authorId;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public static Question of(String question, String authorId, String company, Long year, String category) {
+        Question q = new Question();
+        q.question = question;
+        q.authorId = authorId;
+        q.company = company;
+        q.year = year;
+        q.category = category;
+        q.createdAt = LocalDateTime.now();
+        q.updatedAt = LocalDateTime.now();
+        return q;
     }
 }
