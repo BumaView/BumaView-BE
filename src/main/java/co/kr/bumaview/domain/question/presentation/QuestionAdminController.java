@@ -3,6 +3,7 @@ package co.kr.bumaview.domain.question.presentation;
 import co.kr.bumaview.domain.question.domain.service.command.QuestionCommandService;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionRequest;
 import co.kr.bumaview.domain.question.presentation.dto.res.QuestionResponse;
+import co.kr.bumaview.domain.question.presentation.dto.res.QuestionSheetResponse;
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/questions")
@@ -37,11 +39,11 @@ public class QuestionAdminController {
     }
 
     @PostMapping("/sheets")
-    public ResponseEntity<QuestionResponse> handleQuestionsFromSheet(
+    public ResponseEntity<QuestionSheetResponse> handleQuestionsFromSheet(
             @RequestBody String googleSheetUrl,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
-        questionCommandService.createQuestionsFromGoogleSheet(googleSheetUrl, userDetails.getUserId());
-        return ResponseEntity.ok(new QuestionResponse("등록되었습니다", List.of()));
+        Long total = questionCommandService.createQuestionsFromGoogleSheet(googleSheetUrl, userDetails.getUserId());
+        return ResponseEntity.ok().body(new QuestionSheetResponse("등록되었습니다", Map.of("total", total)));
     }
 }
