@@ -88,13 +88,15 @@ public class QuestionCommandService {
                 qToSave.add(qEntity);
             }
 
+            Long count = (long) qToSave.size();
             // 8) DB에 일괄 저장
             questionRepository.saveAll(qToSave);
+
+            return count;
 
         } catch (Exception e) {
             throw new RuntimeException("Google Sheet에서 질문을 불러오는 중 오류 발생: " + e.getMessage(), e);
         }
-        return questionRepository.count();
     }
 
     private String extractSpreadsheetId(String url) {
