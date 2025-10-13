@@ -21,7 +21,7 @@ public class Question {
     private String question;
 
     @Column(columnDefinition = "json")
-    private String tag; //-> json
+    private String tag;
 
     private String company;
 
