@@ -8,6 +8,8 @@ import co.kr.bumaview.domain.interview.presentation.dto.res.WriteAnswerRes;
 import co.kr.bumaview.domain.interview.service.InterviewService;
 import co.kr.bumaview.domain.question.domain.Question;
 import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
+import co.kr.bumaview.domain.question.presentation.dto.req.GetRandomQuestionReq;
+import co.kr.bumaview.domain.question.presentation.dto.res.GetRandomQuestionRes;
 import co.kr.bumaview.domain.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,13 @@ public class InterviewController {
     @GetMapping("/random")
     public Question getRandomInterview() {
         return questionRepository.findRandomQuestion();
+    }
+
+    @PostMapping("/random/filter")
+    public ResponseEntity<GetRandomQuestionRes> getRandomQuestion(
+            @RequestBody GetRandomQuestionReq req
+    ) {
+        return ResponseEntity.ok(interviewService.getRandomQuestion(req));
     }
 
     @PostMapping

@@ -10,7 +10,9 @@ import co.kr.bumaview.domain.interview.presentation.dto.res.InterviewSummaryRes;
 import co.kr.bumaview.domain.interview.presentation.dto.res.WriteAnswerRes;
 import co.kr.bumaview.domain.question.domain.Question;
 import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
+import co.kr.bumaview.domain.question.presentation.dto.req.GetRandomQuestionReq;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionDto;
+import co.kr.bumaview.domain.question.presentation.dto.res.GetRandomQuestionRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -97,6 +99,29 @@ public class InterviewService {
         return new InterviewSummaryRes(
                 interviewId,
                 new InterviewSummaryRes.Summary(totalQuestions, totalTimeSpent, average, answers)
+        );
+    }
+    @Transactional(readOnly = true)
+    public GetRandomQuestionRes getRandomQuestion(GetRandomQuestionReq req) {
+        List<Question> filtered = questionRepository.findFilteredQuestions(
+                req.category(),
+                req.company(),
+                req.year()
+        );
+
+        if (filtered.isEmpty()) {
+            throw new IllegalArgumentException("조건에 맞는 질문이 없습니다.");
+        }
+
+        Collections.shuffle(filtered);
+        Question random = filtered.get(0);
+
+        return new GetRandomQuestionRes(
+                random.getId(),
+                random.getQuestion(),
+                random.getCategory(),
+                random.getCompany(),
+                Math.toIntExact(random.getYear())
         );
     }
 }
