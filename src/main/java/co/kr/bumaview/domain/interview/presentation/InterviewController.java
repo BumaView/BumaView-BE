@@ -3,6 +3,7 @@ package co.kr.bumaview.domain.interview.presentation;
 import co.kr.bumaview.domain.interview.presentation.dto.req.CreateInterviewReq;
 import co.kr.bumaview.domain.interview.presentation.dto.req.WriteAnswerReq;
 import co.kr.bumaview.domain.interview.presentation.dto.res.CreateInterviewRes;
+import co.kr.bumaview.domain.interview.presentation.dto.res.InterviewSummaryRes;
 import co.kr.bumaview.domain.interview.presentation.dto.res.WriteAnswerRes;
 import co.kr.bumaview.domain.interview.service.InterviewService;
 import co.kr.bumaview.domain.question.domain.Question;
@@ -45,5 +46,15 @@ public class InterviewController {
     ) {
         WriteAnswerRes response = interviewService.writeAnswer(interviewId, req, userDetails.getUserId());
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{interview_id}/finish")
+    public ResponseEntity<InterviewSummaryRes> finishInterview(
+            @PathVariable("interview_id") Long interviewId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        return ResponseEntity.ok().body(
+                interviewService.getInterviewSummary(interviewId, userDetails.getUserId())
+        );
     }
 }

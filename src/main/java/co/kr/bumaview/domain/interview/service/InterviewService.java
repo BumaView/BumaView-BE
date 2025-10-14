@@ -1,15 +1,19 @@
 package co.kr.bumaview.domain.interview.service;
 
+import co.kr.bumaview.domain.interview.domain.AnswerRecord;
 import co.kr.bumaview.domain.interview.domain.Interview;
 import co.kr.bumaview.domain.interview.domain.repository.InterviewRepository;
 import co.kr.bumaview.domain.interview.presentation.dto.req.CreateInterviewReq;
 import co.kr.bumaview.domain.interview.presentation.dto.req.WriteAnswerReq;
 import co.kr.bumaview.domain.interview.presentation.dto.res.CreateInterviewRes;
+import co.kr.bumaview.domain.interview.presentation.dto.res.InterviewSummaryRes;
 import co.kr.bumaview.domain.interview.presentation.dto.res.WriteAnswerRes;
 import co.kr.bumaview.domain.question.domain.Question;
 import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +26,8 @@ public class InterviewService {
 
     private final QuestionRepository questionRepository;
     private final InterviewRepository interviewRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     public CreateInterviewRes createInterview(CreateInterviewReq req, String userId) {
         List<Question> allQuestions = questionRepository.findByCategory(req.category());
@@ -64,6 +70,32 @@ public class InterviewService {
                 req.getAnswer(),
                 req.getTimeSpent(),
                 java.time.LocalDateTime.now()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public InterviewSummaryRes getInterviewSummary(Long interviewId, String userId) {
+        Interview interview = interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 면접 세션입니다."));
+
+        if (!interview.getUserId().equals(userId)) {
+            throw new AccessDeniedException("자신의 면접만 조회할 수 있습니다.");
+        }
+
+        List<AnswerRecord> answers = interview.getAnswers();
+        if (answers == null || answers.isEmpty()) {
+            throw new IllegalStateException("아직 답변이 없습니다.");
+        }
+
+        int totalQuestions = answers.size();
+        int totalTimeSpent = answers.stream()
+                .mapToInt(AnswerRecord::getTimeSpent)
+                .sum();
+        double average = Math.round((double) totalTimeSpent / totalQuestions * 10) / 10.0;
+
+        return new InterviewSummaryRes(
+                interviewId,
+                new InterviewSummaryRes.Summary(totalQuestions, totalTimeSpent, average, answers)
         );
     }
 }
