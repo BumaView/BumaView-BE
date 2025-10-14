@@ -27,7 +27,7 @@ public class Interview {
     private String userId;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "interview_id")
+    @JoinColumn(name = "question_id")
     private List<Question> questions = new ArrayList<>();
 
     @Type(JsonType.class)
