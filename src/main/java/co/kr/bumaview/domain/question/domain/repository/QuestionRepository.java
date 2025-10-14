@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long>, JpaSpecificationExecutor<Question> {
 
+    long count();
+
     Page<Question> findByQuestionContaining(String query, Pageable pageable);
 
     @Query(value = "SELECT * FROM questions ORDER BY RAND() LIMIT 1", nativeQuery = true)
