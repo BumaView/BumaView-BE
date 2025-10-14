@@ -1,15 +1,20 @@
 package co.kr.bumaview.domain.interview.service;
 
+import co.kr.bumaview.domain.interview.domain.AnswerRecord;
 import co.kr.bumaview.domain.interview.domain.Interview;
 import co.kr.bumaview.domain.interview.domain.repository.InterviewRepository;
 import co.kr.bumaview.domain.interview.presentation.dto.req.CreateInterviewReq;
 import co.kr.bumaview.domain.interview.presentation.dto.req.WriteAnswerReq;
 import co.kr.bumaview.domain.interview.presentation.dto.res.CreateInterviewRes;
+import co.kr.bumaview.domain.interview.presentation.dto.res.InterviewSummaryRes;
 import co.kr.bumaview.domain.interview.presentation.dto.res.WriteAnswerRes;
 import co.kr.bumaview.domain.question.domain.Question;
 import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
+import co.kr.bumaview.domain.question.presentation.dto.req.GetRandomQuestionReq;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionDto;
+import co.kr.bumaview.domain.question.presentation.dto.res.GetRandomQuestionRes;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +61,10 @@ public class InterviewService {
         Interview interview = interviewRepository.findById(interviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 면접 세션입니다."));
 
+        if (!interview.getUserId().equals(userId)) {
+            throw new AccessDeniedException("면접 세션에 접근할 수 있는 권한이 없습니다.");
+        }
+
         interview.addAnswer(req.getQuestionId(), req.getAnswer(), req.getTimeSpent());
 
         return new WriteAnswerRes(
@@ -64,6 +73,55 @@ public class InterviewService {
                 req.getAnswer(),
                 req.getTimeSpent(),
                 java.time.LocalDateTime.now()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public InterviewSummaryRes getInterviewSummary(Long interviewId, String userId) {
+        Interview interview = interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 면접 세션입니다."));
+
+        if (!interview.getUserId().equals(userId)) {
+            throw new AccessDeniedException("자신의 면접만 조회할 수 있습니다.");
+        }
+
+        List<AnswerRecord> answers = interview.getAnswers();
+        if (answers == null || answers.isEmpty()) {
+            throw new IllegalStateException("아직 답변이 없습니다.");
+        }
+
+        int totalQuestions = answers.size();
+        int totalTimeSpent = answers.stream()
+                .mapToInt(AnswerRecord::getTimeSpent)
+                .sum();
+        double average = Math.round((double) totalTimeSpent / totalQuestions * 10) / 10.0;
+
+        return new InterviewSummaryRes(
+                interviewId,
+                new InterviewSummaryRes.Summary(totalQuestions, totalTimeSpent, average, answers)
+        );
+    }
+    @Transactional(readOnly = true)
+    public GetRandomQuestionRes getRandomQuestion(GetRandomQuestionReq req) {
+        List<Question> filtered = questionRepository.findFilteredQuestions(
+                req.category(),
+                req.company(),
+                req.year()
+        );
+
+        if (filtered.isEmpty()) {
+            throw new IllegalArgumentException("조건에 맞는 질문이 없습니다.");
+        }
+
+        Collections.shuffle(filtered);
+        Question random = filtered.get(0);
+
+        return new GetRandomQuestionRes(
+                random.getId(),
+                random.getQuestion(),
+                random.getCategory(),
+                random.getCompany(),
+                Math.toIntExact(random.getYear())
         );
     }
 }

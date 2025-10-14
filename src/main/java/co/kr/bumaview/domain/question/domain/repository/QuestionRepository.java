@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -17,5 +18,17 @@ public interface QuestionRepository extends JpaRepository<Question, Long>, JpaSp
     Question findRandomQuestion();
 
     List<Question> findByCategory(String category);
+
+    @Query("""
+        SELECT q FROM Question q
+        WHERE (:category IS NULL OR q.category = :category)
+          AND (:company IS NULL OR q.company = :company)
+          AND (:year IS NULL OR q.year = :year)
+    """)
+    List<Question> findFilteredQuestions(
+            @Param("category") String category,
+            @Param("company") String company,
+            @Param("year") Integer year
+    );
 
 }
