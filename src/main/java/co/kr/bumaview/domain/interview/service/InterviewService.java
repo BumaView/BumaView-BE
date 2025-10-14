@@ -11,7 +11,6 @@ import co.kr.bumaview.domain.interview.presentation.dto.res.WriteAnswerRes;
 import co.kr.bumaview.domain.question.domain.Question;
 import co.kr.bumaview.domain.question.domain.repository.QuestionRepository;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -26,8 +25,6 @@ public class InterviewService {
 
     private final QuestionRepository questionRepository;
     private final InterviewRepository interviewRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
 
     public CreateInterviewRes createInterview(CreateInterviewReq req, String userId) {
         List<Question> allQuestions = questionRepository.findByCategory(req.category());
@@ -61,6 +58,10 @@ public class InterviewService {
     public WriteAnswerRes writeAnswer(Long interviewId, WriteAnswerReq req, String userId) {
         Interview interview = interviewRepository.findById(interviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 면접 세션입니다."));
+
+        if (!interview.getUserId().equals(userId)) {
+            throw new AccessDeniedException("면접 세션에 접근할 수 있는 권한이 없습니다.");
+        }
 
         interview.addAnswer(req.getQuestionId(), req.getAnswer(), req.getTimeSpent());
 
