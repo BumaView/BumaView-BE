@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/bookmarks")
+@RequestMapping("/user/bookmarks")
 @PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class BookmarkController {
