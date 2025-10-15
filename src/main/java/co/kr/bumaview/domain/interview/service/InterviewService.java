@@ -14,6 +14,7 @@ import co.kr.bumaview.domain.question.presentation.dto.req.GetRandomQuestionReq;
 import co.kr.bumaview.domain.question.presentation.dto.req.QuestionDto;
 import co.kr.bumaview.domain.question.presentation.dto.res.GetRandomQuestionRes;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InterviewService {
 
     private final QuestionRepository questionRepository;
@@ -31,11 +33,17 @@ public class InterviewService {
     public CreateInterviewRes createInterview(CreateInterviewReq req, String userId) {
         List<Question> allQuestions = questionRepository.findByCategory(req.category());
 
+        // 카테고리 질문이 없으면 전체 질문에서 랜덤으로 추출
         if (allQuestions.isEmpty()) {
-            throw new IllegalArgumentException("해당 카테고리의 질문이 없습니다.");
+            log.info("해당 카테고리의 질문이 없으므로 전체 질문 중 랜덤으로 시작합니다.");
+            allQuestions = questionRepository.findAll();
+
+            if (allQuestions.isEmpty()) {
+                throw new IllegalStateException("등록된 질문이 없습니다.");
+            }
         }
 
-        // 요청 count 만큼 랜덤 추출
+        // 공통: 랜덤 섞고 count만큼 자르기
         Collections.shuffle(allQuestions);
         List<Question> selectedQuestions = allQuestions.stream()
                 .limit(req.count())
