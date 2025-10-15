@@ -23,7 +23,7 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @PostMapping("/folders")
+    @PostMapping("/forders")
     public ResponseEntity<FolderResponse> createFolder(
             @RequestBody CreateFolderRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -41,9 +41,9 @@ public class BookmarkController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{folder_id}")
+    @GetMapping("/{forder_id}")
     public ResponseEntity<BookmarkFolderResponse> getFolder(
-            @PathVariable("folder_id") Long folderId
+            @PathVariable("forder_id") Long folderId
     ) {
         BookmarkFolderResponse response = bookmarkService.getFolderWithBookmarks(folderId);
 
