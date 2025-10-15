@@ -39,7 +39,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "https://bnuma-viewew-fe-v2.vercel.app"
+                "https://bnuma-viewew-fe-v2.vercel.app",
+                "https://bumaview-be.onrender.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
