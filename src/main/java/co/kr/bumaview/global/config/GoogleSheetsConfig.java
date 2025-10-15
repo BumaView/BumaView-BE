@@ -5,26 +5,26 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.api.services.sheets.v4.Sheets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.google.api.services.sheets.v4.Sheets;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Collections;
 
 @Configuration
 public class GoogleSheetsConfig {
-    @Value("${google.sheets.credentials-path}")
-    private String credentialsPath;
+
+    @Value("${google.sheets.credentials-url}")
+    private String credentialsUrl;
 
     @Bean
-    public Sheets sheetsService() throws IOException, GeneralSecurityException {
-        try(FileInputStream fileInputStream = new FileInputStream(credentialsPath)) {
+    public Sheets sheetsService() throws Exception {
+        try (InputStream inputStream = URI.create(credentialsUrl).toURL().openStream()) {
             GoogleCredentials credentials = GoogleCredentials
-                    .fromStream(fileInputStream)
+                    .fromStream(inputStream)
                     .createScoped(Collections.singletonList("https://www.googleapis.com/auth/spreadsheets"));
 
             HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
