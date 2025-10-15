@@ -31,4 +31,4 @@ oauth:
 
 google:
   sheets:
-    credentials-path: ${GOOGLE_SHEETS_KEY_FILE_PATH}
+    credentials-url: ${GOOGLE_SHEETS_KEY_FILE_PATH}
