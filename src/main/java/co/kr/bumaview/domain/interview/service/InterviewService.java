@@ -94,15 +94,15 @@ public class InterviewService {
         }
 
         List<AnswerRecord> answers = interview.getAnswers();
-        if (answers == null || answers.isEmpty()) {
-            throw new IllegalStateException("아직 답변이 없습니다.");
+        if (answers == null) {
+            answers = List.of(); // 빈 리스트로 초기화
         }
 
         int totalQuestions = answers.size();
-        int totalTimeSpent = answers.stream()
-                .mapToInt(AnswerRecord::getTimeSpent)
-                .sum();
-        double average = Math.round((double) totalTimeSpent / totalQuestions * 10) / 10.0;
+        int totalTimeSpent = answers.stream().mapToInt(AnswerRecord::getTimeSpent).sum();
+        double average = totalQuestions > 0
+                ? Math.round((double) totalTimeSpent / totalQuestions * 10) / 10.0
+                : 0;
 
         return new InterviewSummaryRes(
                 interviewId,
