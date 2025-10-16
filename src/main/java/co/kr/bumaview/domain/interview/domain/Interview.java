@@ -26,8 +26,12 @@ public class Interview {
     @Column(name = "user_id")
     private String userId;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "question_id")
+    @ManyToMany
+    @JoinTable(
+            name = "mock_interview_questions",
+            joinColumns = @JoinColumn(name = "interview_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
     private List<Question> questions = new ArrayList<>();
 
     @Type(JsonType.class)
@@ -38,12 +42,13 @@ public class Interview {
 
     public Interview(String title, List<Question> questions, String userId) {
         this.interviewName = title;
-        this.questions = questions;
-        answers = new ArrayList<>();
         this.userId = userId;
+        this.questions = questions != null ? new ArrayList<>(questions) : new ArrayList<>();
+        this.answers = new ArrayList<>();
     }
 
     public void addAnswer(Long questionId, String answer, int timeSpent) {
+        if (this.answers == null) this.answers = new ArrayList<>();
         this.answers.add(new AnswerRecord(questionId, answer, timeSpent, LocalDateTime.now()));
     }
 }
