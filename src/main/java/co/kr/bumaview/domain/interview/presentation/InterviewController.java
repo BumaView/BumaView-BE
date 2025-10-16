@@ -47,6 +47,14 @@ public class InterviewController {
         return ResponseEntity.ok(interviewService.createInterview(req, userDetails.getUserId()));
     }
 
+    @GetMapping("/{interview_id}")
+    public ResponseEntity<InterviewSummaryRes> getInterviewSummary(
+            @PathVariable("interview_id") Long interviewId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(interviewService.getInterviewSummary(interviewId, userDetails.getUserId()));
+    }
+
     @PostMapping("/{interview_id}")
     public ResponseEntity<WriteAnswerRes> writeAnswer(
             @PathVariable("interview_id") Long interviewId,
