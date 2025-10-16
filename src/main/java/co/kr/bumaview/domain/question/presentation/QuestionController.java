@@ -24,7 +24,7 @@ public class QuestionController {
 
     @GetMapping
     public ResponseEntity<Page<QuestionPageResponse>> getQuestionLists(
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 100) Pageable pageable
     ) {
         Page<QuestionPageResponse> questions = questionQueryService.getQuestions(pageable);
         return ResponseEntity.ok(questions);
@@ -41,7 +41,7 @@ public class QuestionController {
     @GetMapping(params = "query")
     public ResponseEntity<?> filterQuestion(
             @RequestParam("query") String query,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+            @PageableDefault(size = 100, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         // 검색 쿼리 적용
         Page<Question> questions = questionRepository.findByQuestionContaining(query, pageable);
@@ -62,7 +62,7 @@ public class QuestionController {
     @PostMapping("/search")
     public ResponseEntity<?> filterQuestions(
             @RequestBody QuestionFilterRequest request,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+            @PageableDefault(size = 100, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         Page<Question> questions = questionQueryService.filterQuestions(request, pageable);
 
