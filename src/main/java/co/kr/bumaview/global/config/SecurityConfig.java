@@ -41,7 +41,7 @@ public class SecurityConfig {
                 "https://bnuma-viewew-fe-v2.vercel.app",
                 "https://bumaview-be.onrender.com"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // 인증정보(쿠키, Authorization 헤더 등) 허용
 
