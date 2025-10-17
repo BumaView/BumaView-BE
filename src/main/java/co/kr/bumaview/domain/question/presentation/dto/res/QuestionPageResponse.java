@@ -9,5 +9,6 @@ public record QuestionPageResponse(
         String company,
         Long year,
         String category,
-        String tag
+        String tag,
+        String authorId
 ) {}

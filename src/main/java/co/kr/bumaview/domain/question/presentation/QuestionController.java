@@ -53,7 +53,8 @@ public class QuestionController {
                 q.getCompany(),
                 q.getYear(),
                 q.getCategory(),
-                q.getTag()
+                q.getTag(),
+                q.getAuthorId()
         ));
 
         return ResponseEntity.ok(response);
@@ -72,7 +73,8 @@ public class QuestionController {
                 q.getCompany(),
                 q.getYear(),
                 q.getCategory(),
-                q.getTag()
+                q.getTag(),
+                q.getAuthorId()
         ));
 
         return ResponseEntity.ok(response);

@@ -27,7 +27,8 @@ public class QuestionQueryService {
                         q.getCompany(),
                         q.getYear(),
                         q.getCategory(),
-                        q.getTag()
+                        q.getTag(),
+                        q.getAuthorId()
                 ));
     }
 
@@ -39,7 +40,8 @@ public class QuestionQueryService {
                         q.getCompany(),
                         q.getYear(),
                         q.getCategory(),
-                        q.getTag()
+                        q.getTag(),
+                        q.getAuthorId()
                 ))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 질문입니다."));
     }
